@@ -1,17 +1,28 @@
-import { OrderStore } from '../../../models/order';
+import { OrderStore } from '../../models/order';
+import { UserStore } from '../../models/user';
 
 const store = new OrderStore();
+const userStore = new UserStore();
 
 describe('Order Model Tests', () => {
-    const order = {
-        user_id: 1,
-        status: 'active'
-    };
-
+    let userId: number;
     let createdOrder: any;
 
+    beforeAll(async () => {
+        const user = await userStore.create({
+            first_name: 'Order',
+            last_name: 'Tester',
+            username: `order_model_user_${Date.now()}`,
+            password: 'test123'
+        });
+        userId = user.id as number;
+    });
+
     it('should create an order', async () => {
-        const result = await store.create(order);
+        const result = await store.create({
+            user_id: userId,
+            status: 'active'
+        });
         createdOrder = result;
         expect(result.status).toBe('active');
     });

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { verifyAuthToken } from '../middleware/verifyAuthToken';
 import { OrderStore } from '../models/order';
-import { OrderProductStore } from '../models/orderProduct';
+import { OrderProductStore } from '../models/orderProducts';
 
 const store = new OrderStore();
 const opStore = new OrderProductStore();

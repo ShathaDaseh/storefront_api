@@ -13,12 +13,14 @@ const {
     ENV,
 } = process.env;
 
+const port = parseInt(POSTGRES_PORT || '5432', 10);
+
 const devConfig = {
     host: POSTGRES_HOST,
     database: POSTGRES_DB,
     user: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
-    port: Number(POSTGRES_PORT),
+    port,
 };
 
 const testConfig = {
@@ -26,7 +28,7 @@ const testConfig = {
     database: POSTGRES_TEST_DB,
     user: POSTGRES_USER,
     password: POSTGRES_PASSWORD,
-    port: Number(POSTGRES_PORT),
+    port,
 };
 
 const client = new Pool(ENV === 'test' ? testConfig : devConfig);

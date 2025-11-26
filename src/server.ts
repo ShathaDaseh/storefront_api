@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { usersRoutes } from './handlers/users';
-import { productsRoutes } from './handlers/products';
+import { productsRoutes } from './handlers/product';
 import { ordersRoutes } from './handlers/orders';
 
 dotenv.config();

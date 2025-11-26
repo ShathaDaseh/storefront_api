@@ -24,14 +24,14 @@ const show = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   const newUser = await store.create(req.body);
-  const token = jwt.sign(newUser, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  const token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
+  res.json({ token, user: newUser });
 };
 
 const auth = async (req: Request, res: Response) => {
   const user = await store.authenticate(req.body.username, req.body.password);
   if (!user) return res.status(401).json('Invalid credentials');
 
-  const token = jwt.sign(user, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  const token = jwt.sign({ user }, process.env.TOKEN_SECRET as string);
+  res.json({ token, user });
 };

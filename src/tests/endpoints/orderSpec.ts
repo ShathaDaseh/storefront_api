@@ -5,13 +5,14 @@ const request = supertest(app);
 
 let token = '';
 let userId = 0;
+const unique = Date.now();
 
 describe('Order API Endpoints', () => {
     beforeAll(async () => {
         const user = await request.post('/users').send({
             first_name: 'Order',
             last_name: 'User',
-            username: 'order_user_api',
+            username: `order_user_api_${unique}`,
             password: '9999'
         });
 

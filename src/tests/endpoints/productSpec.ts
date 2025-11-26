@@ -4,13 +4,14 @@ import app from '../../server';
 const request = supertest(app);
 
 let token = '';
+const unique = Date.now();
 
 describe('Product API Endpoints', () => {
     beforeAll(async () => {
         const user = await request.post('/users').send({
             first_name: 'Test',
             last_name: 'User',
-            username: 'product_user',
+            username: `product_user_${unique}`,
             password: '12345'
         });
         token = user.body.token;
