@@ -1,14 +1,14 @@
-version: '3.9'
-
 services:
   postgres:
-    image: postgres
+    image: postgres:14
+    container_name: store_postgres
     ports:
-      - '5432:5432'
-    env_file:
-      - .env
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: store_user
+      POSTGRES_PASSWORD: store_password
     volumes:
-      - 'postgres:/var/lib/postgresql/data'
+      - ./postgres-data:/var/lib/postgresql/data
 
 volumes:
-  postgres:
+  postgres-data:

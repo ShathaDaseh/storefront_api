@@ -1,0 +1,45 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environments
+.env
+.env.test
+.env.dev
+
+# Database data (local)
+postgres-data/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Jest / Jasmine cache
+coverage/
+
+# Docker artifacts
+**/.dockerignore
+*.pid
+*.seed
+*.pid.lock
+
+# Misc
+*.swp
+*.swo

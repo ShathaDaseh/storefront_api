@@ -1,0 +1,18 @@
+{
+    "dev": {
+        "driver": "pg",
+        "host": "127.0.0.1",
+        "port": 5432,
+        "database": "store_dev",
+        "user": "store_user",
+        "password": "store_password"
+    },
+    "test": {
+        "driver": "pg",
+        "host": "127.0.0.1",
+        "database": "store_test",
+        "user": "store_user",
+        "password": "store_password",
+        "port": 5432
+    }
+}
