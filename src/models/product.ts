@@ -4,26 +4,26 @@ export type Product = {
     id?: number;
     name: string;
     price: number;
-    category?: string;
+    category: string;
 };
 
 export class ProductStore {
     async index(): Promise<Product[]> {
         const conn = await client.connect();
         try {
-            const sql = 'SELECT * FROM products';
-            const result = await conn.query(sql);
+            const result = await conn.query('SELECT * FROM products');
             return result.rows;
         } finally {
             conn.release();
         }
     }
 
-    async show(id: string): Promise<Product | undefined> {
+    async show(id: string): Promise<Product> {
         const conn = await client.connect();
         try {
-            const sql = 'SELECT * FROM products WHERE id=$1';
-            const result = await conn.query(sql, [id]);
+            const result = await conn.query('SELECT * FROM products WHERE id=$1', [
+                id,
+            ]);
             return result.rows[0];
         } finally {
             conn.release();
@@ -33,48 +33,12 @@ export class ProductStore {
     async create(p: Product): Promise<Product> {
         const conn = await client.connect();
         try {
-            const sql = `
-        INSERT INTO products (name, price, category)
-        VALUES ($1, $2, $3)
-        RETURNING *
-      `;
-            const result = await conn.query(sql, [
-                p.name,
-                p.price,
-                p.category ?? null
-            ]);
-            return result.rows[0];
-        } finally {
-            conn.release();
-        }
-    }
-
-    async update(id: string, p: Product): Promise<Product | undefined> {
-        const conn = await client.connect();
-        try {
-            const sql = `
-        UPDATE products
-        SET name=$1, price=$2, category=$3
-        WHERE id=$4
-        RETURNING *
-      `;
-            const result = await conn.query(sql, [
-                p.name,
-                p.price,
-                p.category ?? null,
-                id
-            ]);
-            return result.rows[0];
-        } finally {
-            conn.release();
-        }
-    }
-
-    async delete(id: string): Promise<Product | undefined> {
-        const conn = await client.connect();
-        try {
-            const sql = 'DELETE FROM products WHERE id=$1 RETURNING *';
-            const result = await conn.query(sql, [id]);
+            const result = await conn.query(
+                `INSERT INTO products (name, price, category)
+         VALUES ($1, $2, $3)
+         RETURNING *`,
+                [p.name, p.price, p.category]
+            );
             return result.rows[0];
         } finally {
             conn.release();

@@ -1,40 +1,23 @@
 import express, { Request, Response } from 'express';
 import { ProductStore } from '../models/product';
-import verifyAuthToken from '../middleware/verifyAuthToken';
+import { verifyAuthToken } from '../middleware/verifyAuthToken';
 
 const store = new ProductStore();
 
+export const productsRoutes = (app: express.Application) => {
+    app.get('/products', index);
+    app.get('/products/:id', show);
+    app.post('/products', verifyAuthToken, create);
+};
+
 const index = async (_req: Request, res: Response) => {
-    const products = await store.index();
-    res.json(products);
+    res.json(await store.index());
 };
 
 const show = async (req: Request, res: Response) => {
-    const product = await store.show(req.params.id);
-    res.json(product);
+    res.json(await store.show(req.params.id));
 };
 
 const create = async (req: Request, res: Response) => {
-    const product = await store.create(req.body);
-    res.json(product);
+    res.json(await store.create(req.body));
 };
-
-const update = async (req: Request, res: Response) => {
-    const product = await store.update(req.params.id, req.body);
-    res.json(product);
-};
-
-const destroy = async (req: Request, res: Response) => {
-    const product = await store.delete(req.params.id);
-    res.json(product);
-};
-
-const productRoutes = (app: express.Application) => {
-    app.get('/products', index);                          // public
-    app.get('/products/:id', show);                       // public
-    app.post('/products', verifyAuthToken, create);       // protected
-    app.put('/products/:id', verifyAuthToken, update);    // protected
-    app.delete('/products/:id', verifyAuthToken, destroy);// protected
-};
-
-export default productRoutes;

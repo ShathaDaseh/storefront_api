@@ -1,13 +1,16 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import { UserStore } from '../models/user';
-import verifyAuthToken from '../middleware/verifyAuthToken';
-
-dotenv.config();
-const { TOKEN_SECRET = '' } = process.env;
+import { verifyAuthToken } from '../middleware/verifyAuthToken';
 
 const store = new UserStore();
+
+export const usersRoutes = (app: express.Application) => {
+  app.get('/users', verifyAuthToken, index);
+  app.get('/users/:id', verifyAuthToken, show);
+  app.post('/users', create);
+  app.post('/users/auth', auth);
+};
 
 const index = async (_req: Request, res: Response) => {
   const users = await store.index();
@@ -20,28 +23,15 @@ const show = async (req: Request, res: Response) => {
 };
 
 const create = async (req: Request, res: Response) => {
-  const { first_name, last_name, username, password } = req.body;
-  const user = await store.create({ first_name, last_name, username, password });
-  const token = jwt.sign({ user }, TOKEN_SECRET);
+  const newUser = await store.create(req.body);
+  const token = jwt.sign(newUser, process.env.TOKEN_SECRET as string);
   res.json(token);
 };
 
-const authenticate = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
-  const user = await store.authenticate(username, password);
-  if (!user) {
-    res.status(401).json('Invalid credentials');
-    return;
-  }
-  const token = jwt.sign({ user }, TOKEN_SECRET);
+const auth = async (req: Request, res: Response) => {
+  const user = await store.authenticate(req.body.username, req.body.password);
+  if (!user) return res.status(401).json('Invalid credentials');
+
+  const token = jwt.sign(user, process.env.TOKEN_SECRET as string);
   res.json(token);
 };
-
-const userRoutes = (app: express.Application) => {
-  app.post('/users', create); // signup
-  app.post('/users/authenticate', authenticate); // login
-  app.get('/users', verifyAuthToken, index); // protected
-  app.get('/users/:id', verifyAuthToken, show); // protected
-};
-
-export default userRoutes;

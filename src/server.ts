@@ -1,27 +1,22 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import userRoutes from './handlers/users';
-import productRoutes from './handlers/product';
-import orderRoutes from './handlers/orders';
 import dotenv from 'dotenv';
+import { usersRoutes } from './handlers/users';
+import { productsRoutes } from './handlers/products';
+import { ordersRoutes } from './handlers/orders';
 
 dotenv.config();
 
 const app: express.Application = express();
 const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-userRoutes(app);
-productRoutes(app);
-orderRoutes(app);
-
-app.get('/', (_req, res) => {
-    res.send('Storefront API running');
-});
+usersRoutes(app);
+productsRoutes(app);
+ordersRoutes(app);
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
 
 export default app;

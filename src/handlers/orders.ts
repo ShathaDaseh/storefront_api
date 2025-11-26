@@ -1,51 +1,30 @@
 import express, { Request, Response } from 'express';
+import { verifyAuthToken } from '../middleware/verifyAuthToken';
 import { OrderStore } from '../models/order';
-import verifyAuthToken from '../middleware/verifyAuthToken';
+import { OrderProductStore } from '../models/orderProduct';
 
 const store = new OrderStore();
+const opStore = new OrderProductStore();
 
-const index = async (_req: Request, res: Response) => {
-    const orders = await store.index();
-    res.json(orders);
+export const ordersRoutes = (app: express.Application) => {
+    app.post('/orders', verifyAuthToken, createOrder);
+    app.get('/orders/:id', verifyAuthToken, getOrder);
+    app.post('/orders/:id/products', verifyAuthToken, addProduct);
 };
 
-const show = async (req: Request, res: Response) => {
-    const order = await store.show(req.params.id);
-    res.json(order);
+const createOrder = async (req: Request, res: Response) => {
+    res.json(await store.create(req.body));
 };
 
-const create = async (req: Request, res: Response) => {
-    const order = await store.create(req.body);
-    res.json(order);
-};
-
-const updateStatus = async (req: Request, res: Response) => {
-    const order = await store.updateStatus(req.params.id, req.body.status);
-    res.json(order);
+const getOrder = async (req: Request, res: Response) => {
+    res.json(await store.show(req.params.id));
 };
 
 const addProduct = async (req: Request, res: Response) => {
-    const { quantity, product_id } = req.body;
-    const orderProduct = await store.addProduct(
-        parseInt(quantity, 10),
-        parseInt(req.params.id, 10),
-        parseInt(product_id, 10)
-    );
-    res.json(orderProduct);
+    const op = {
+        order_id: Number(req.params.id),
+        product_id: req.body.product_id,
+        quantity: req.body.quantity,
+    };
+    res.json(await opStore.addProduct(op));
 };
-
-const getProducts = async (req: Request, res: Response) => {
-    const items = await store.getProducts(req.params.id);
-    res.json(items);
-};
-
-const orderRoutes = (app: express.Application) => {
-    app.get('/orders', verifyAuthToken, index);
-    app.get('/orders/:id', verifyAuthToken, show);
-    app.post('/orders', verifyAuthToken, create);
-    app.put('/orders/:id', verifyAuthToken, updateStatus);
-    app.post('/orders/:id/products', verifyAuthToken, addProduct);
-    app.get('/orders/:id/products', verifyAuthToken, getProducts);
-};
-
-export default orderRoutes;
