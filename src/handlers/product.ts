@@ -11,13 +11,28 @@ export const productsRoutes = (app: express.Application) => {
 };
 
 const index = async (_req: Request, res: Response) => {
-    res.json(await store.index());
+    try {
+        const products = await store.index();
+        res.json(products);
+    } catch (err) {
+        res.status(500).json('Failed to fetch products');
+    }
 };
 
 const show = async (req: Request, res: Response) => {
-    res.json(await store.show(req.params.id));
+    try {
+        const product = await store.show(req.params.id);
+        res.json(product);
+    } catch (err) {
+        res.status(500).json('Failed to fetch product');
+    }
 };
 
 const create = async (req: Request, res: Response) => {
-    res.json(await store.create(req.body));
+    try {
+        const product = await store.create(req.body);
+        res.json(product);
+    } catch (err) {
+        res.status(500).json('Failed to create product');
+    }
 };

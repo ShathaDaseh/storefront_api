@@ -5,8 +5,8 @@ const store = new UserStore();
 describe('User Model Tests', () => {
     const unique = Date.now();
     const user = {
-        first_name: 'Shatha',
-        last_name: 'Daseh',
+        firstname: 'Shatha',
+        lastname: 'Daseh',
         username: `shatha_user_${unique}`,
         password: '12345'
     };

@@ -9,8 +9,8 @@ const unique = Date.now();
 describe('Product API Endpoints', () => {
     beforeAll(async () => {
         const user = await request.post('/users').send({
-            first_name: 'Test',
-            last_name: 'User',
+            firstname: 'Test',
+            lastname: 'User',
             username: `product_user_${unique}`,
             password: '12345'
         });

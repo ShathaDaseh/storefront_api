@@ -13,25 +13,41 @@ export const usersRoutes = (app: express.Application) => {
 };
 
 const index = async (_req: Request, res: Response) => {
-  const users = await store.index();
-  res.json(users);
+  try {
+    const users = await store.index();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json('Failed to fetch users');
+  }
 };
 
 const show = async (req: Request, res: Response) => {
-  const user = await store.show(req.params.id);
-  res.json(user);
+  try {
+    const user = await store.show(req.params.id);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json('Failed to fetch user');
+  }
 };
 
 const create = async (req: Request, res: Response) => {
-  const newUser = await store.create(req.body);
-  const token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
-  res.json({ token, user: newUser });
+  try {
+    const newUser = await store.create(req.body);
+    const token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
+    res.json({ token, user: newUser });
+  } catch (err) {
+    res.status(500).json('Failed to create user');
+  }
 };
 
 const auth = async (req: Request, res: Response) => {
-  const user = await store.authenticate(req.body.username, req.body.password);
-  if (!user) return res.status(401).json('Invalid credentials');
+  try {
+    const user = await store.authenticate(req.body.username, req.body.password);
+    if (!user) return res.status(401).json('Invalid credentials');
 
-  const token = jwt.sign({ user }, process.env.TOKEN_SECRET as string);
-  res.json({ token, user });
+    const token = jwt.sign({ user }, process.env.TOKEN_SECRET as string);
+    res.json({ token, user });
+  } catch (err) {
+    res.status(500).json('Failed to authenticate user');
+  }
 };

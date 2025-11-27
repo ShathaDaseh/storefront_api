@@ -10,8 +10,8 @@ describe('User API Endpoints', () => {
 
     it('POST /users should create user and return token', async () => {
         const res = await request.post('/users').send({
-            first_name: 'Shatha',
-            last_name: 'Daseh',
+            firstname: 'Shatha',
+            lastname: 'Daseh',
             username: `shatha_api_${unique}`,
             password: 'pass123'
         });

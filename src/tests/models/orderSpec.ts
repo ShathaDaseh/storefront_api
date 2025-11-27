@@ -10,8 +10,8 @@ describe('Order Model Tests', () => {
 
     beforeAll(async () => {
         const user = await userStore.create({
-            first_name: 'Order',
-            last_name: 'Tester',
+            firstname: 'Order',
+            lastname: 'Tester',
             username: `order_model_user_${Date.now()}`,
             password: 'test123'
         });

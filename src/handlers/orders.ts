@@ -13,11 +13,21 @@ export const ordersRoutes = (app: express.Application) => {
 };
 
 const createOrder = async (req: Request, res: Response) => {
-    res.json(await store.create(req.body));
+    try {
+        const order = await store.create(req.body);
+        res.json(order);
+    } catch (err) {
+        res.status(500).json('Failed to create order');
+    }
 };
 
 const getOrder = async (req: Request, res: Response) => {
-    res.json(await store.show(req.params.id));
+    try {
+        const order = await store.show(req.params.id);
+        res.json(order);
+    } catch (err) {
+        res.status(500).json('Failed to retrieve order');
+    }
 };
 
 const addProduct = async (req: Request, res: Response) => {
@@ -26,5 +36,10 @@ const addProduct = async (req: Request, res: Response) => {
         product_id: req.body.product_id,
         quantity: req.body.quantity,
     };
-    res.json(await opStore.addProduct(op));
+    try {
+        const orderProduct = await opStore.addProduct(op);
+        res.json(orderProduct);
+    } catch (err) {
+        res.status(500).json('Failed to add product to order');
+    }
 };
