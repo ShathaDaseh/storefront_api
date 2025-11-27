@@ -8,8 +8,8 @@ const { BCRYPT_PASSWORD: PEPPER = '', SALT_ROUNDS = '10' } = process.env;
 
 export type User = {
     id?: number;
-    first_name: string;
-    last_name: string;
+    firstname: string;
+    lastname: string;
     username: string;
     password?: string;
 };
@@ -21,7 +21,7 @@ export class UserStore {
         const conn = await client.connect();
         try {
             const result = await conn.query(
-                'SELECT id, first_name, last_name, username FROM users'
+                'SELECT id, firstname, lastname, username FROM users'
             );
             return result.rows;
         } finally {
@@ -33,7 +33,7 @@ export class UserStore {
         const conn = await client.connect();
         try {
             const result = await conn.query(
-                'SELECT id, first_name, last_name, username FROM users WHERE id=$1',
+                'SELECT id, firstname, lastname, username FROM users WHERE id=$1',
                 [id]
             );
             return result.rows[0];
@@ -48,10 +48,10 @@ export class UserStore {
             const hash = bcrypt.hashSync(u.password + PEPPER, salt);
 
             const result = await conn.query(
-                `INSERT INTO users (first_name, last_name, username, password_digest)
+                `INSERT INTO users (firstname, lastname, username, password_digest)
          VALUES ($1, $2, $3, $4)
-         RETURNING id, first_name, last_name, username`,
-                [u.first_name, u.last_name, u.username, hash]
+         RETURNING id, firstname, lastname, username`,
+                [u.firstname, u.lastname, u.username, hash]
             );
 
             return result.rows[0];
