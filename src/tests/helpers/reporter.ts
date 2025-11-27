@@ -50,6 +50,23 @@ beforeAll(async () => {
             product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
             quantity INTEGER NOT NULL
         );
+
+        -- Normalize column names in case an older schema used snake_case.
+        DO $$
+        BEGIN
+            IF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'users' AND column_name = 'first_name'
+            ) THEN
+                ALTER TABLE users RENAME COLUMN first_name TO firstname;
+            END IF;
+            IF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'users' AND column_name = 'last_name'
+            ) THEN
+                ALTER TABLE users RENAME COLUMN last_name TO lastname;
+            END IF;
+        END$$;
     `);
 
     await client.query(
