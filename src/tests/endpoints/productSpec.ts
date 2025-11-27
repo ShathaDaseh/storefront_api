@@ -4,6 +4,7 @@ import app from '../../server';
 const request = supertest(app);
 
 let token = '';
+let productId = 0;
 const unique = Date.now();
 
 describe('Product API Endpoints', () => {
@@ -29,10 +30,17 @@ describe('Product API Endpoints', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.name).toBe('Phone');
+        productId = res.body.id;
     });
 
     it('GET /products returns list', async () => {
         const res = await request.get('/products');
         expect(res.status).toBe(200);
+    });
+
+    it('GET /products/:id returns a product', async () => {
+        const res = await request.get(`/products/${productId}`);
+        expect(res.status).toBe(200);
+        expect(res.body.id).toBe(productId);
     });
 });
