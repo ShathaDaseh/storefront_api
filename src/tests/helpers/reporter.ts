@@ -24,49 +24,37 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
 beforeAll(async () => {
     await client.connect();
 
-    // Ensure tables exist even if migrations were not run before tests.
+    // Recreate tables to ensure schema matches the expected column names for tests.
     await client.query(`
-        CREATE TABLE IF NOT EXISTS users (
+        DROP TABLE IF EXISTS order_products CASCADE;
+        DROP TABLE IF EXISTS orders CASCADE;
+        DROP TABLE IF EXISTS products CASCADE;
+        DROP TABLE IF EXISTS users CASCADE;
+
+        CREATE TABLE users (
             id SERIAL PRIMARY KEY,
             firstname VARCHAR(100),
             lastname VARCHAR(100),
             username VARCHAR(150) UNIQUE NOT NULL,
             password_digest VARCHAR(255) NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS products (
+        CREATE TABLE products (
             id SERIAL PRIMARY KEY,
             name VARCHAR(150) NOT NULL,
             price INTEGER NOT NULL,
             category VARCHAR(150)
         );
-        CREATE TABLE IF NOT EXISTS orders (
+        CREATE TABLE orders (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             status VARCHAR(50) NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS order_products (
+        CREATE TABLE order_products (
             id SERIAL PRIMARY KEY,
             order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
             product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
             quantity INTEGER NOT NULL
         );
-
-        -- Normalize column names in case an older schema used snake_case.
-        DO $$
-        BEGIN
-            IF EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name = 'users' AND column_name = 'first_name'
-            ) THEN
-                ALTER TABLE users RENAME COLUMN first_name TO firstname;
-            END IF;
-            IF EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name = 'users' AND column_name = 'last_name'
-            ) THEN
-                ALTER TABLE users RENAME COLUMN last_name TO lastname;
-            END IF;
-        END$$;
     `);
 
     await client.query(
